@@ -91,7 +91,7 @@ export default function PropertiesPage() {
               <TabsTrigger
                 key={category.name}
                 value={category.name}
-                className="text-lg font-semibold py-6 px-4 rounded-xl bg-white shadow-md hover:bg-blue-50 data-[state=active]:bg-blue-600 data-[state=active]:text-white transition-all duration-300"
+                className="text-xs lg:text-lg font-semibold py-2 lg:py-6 px-4 rounded-xl bg-white shadow-md hover:bg-blue-50 data-[state=active]:bg-blue-600 data-[state=active]:text-white transition-all duration-300"
                 onClick={() => setActiveCategory(category.name)}
               >
                 <category.icon className="mr-2 h-6 w-6" />

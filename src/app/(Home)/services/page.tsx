@@ -5,7 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Building2,
@@ -79,16 +79,17 @@ function ServicesPage() {
           animate="visible"
           variants={stagger}
         >
-          <motion.h1 className="text-7xl font-bold mb-6" variants={fadeInUp}>
-            Our Services
+          <motion.h1 className="text-3xl lg:text-7xl font-bold mb-6" variants={fadeInUp}>
+            Buildit - Crafting Excellence in Every Project
           </motion.h1>
           <motion.p
             className="text-2xl mb-10 max-w-3xl mx-auto"
             variants={fadeInUp}
           >
-            Exceptional construction services for residential and commercial
-            projects. We bring your vision to life with precision, quality, and
-            innovation.
+            At Buildit, we pride ourselves on transforming visions into reality.
+            With expertise in various sectors, we offer a wide range of services
+            tailored to meet the unique needs of our clients, ensuring quality,
+            innovation, and sustainability in every project.
           </motion.p>
         </motion.div>
       </header>
@@ -159,7 +160,7 @@ function ServicesPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            Why Choose BuildIt?
+            Why Choose Buildit?
           </motion.h2>
           <motion.div
             className="grid grid-cols-1 md:grid-cols-3 gap-12"
@@ -259,84 +260,49 @@ function ServicesPage() {
             Contact Us
           </motion.h2>
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-12"
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
+            className="grid grid-cols-1 md:grid-cols-2 gap-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
           >
-            {[
-              {
-                icon: <Phone className="h-10 w-10" />,
-                title: "Phone",
-                info: "+1 (555) 123-4567",
-              },
-              {
-                icon: <Mail className="h-10 w-10" />,
-                title: "Email",
-                info: "info@buildit.com",
-              },
-              {
-                icon: <MapPin className="h-10 w-10" />,
-                title: "Address",
-                info: "123 Construction Ave, Building City, 12345",
-              },
-            ].map((item, index) => (
-              <motion.div key={index} variants={fadeInUp}>
-                <Card className="text-center p-8 hover:shadow-lg transition-shadow duration-300">
-                  <CardContent>
-                    <div className="flex justify-center mb-6 text-blue-600">
-                      {item.icon}
-                    </div>
-                    <h3 className="text-2xl font-semibold mb-4">
-                      {item.title}
-                    </h3>
-                    <p className="text-gray-600">{item.info}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+            <div>
+              <h3 className="text-3xl font-semibold mb-6">Get In Touch</h3>
+              <p className="text-lg text-gray-600 mb-8">
+                We're here to assist you. Whether you have a question, need a
+                quote, or want to discuss your project, feel free to reach out
+                to us. Our team is ready to help you with your construction
+                needs.
+              </p>
+              <ul className="space-y-6">
+                <li className="flex items-center text-lg">
+                  <Phone className="mr-2 h-6 w-6 text-blue-600" />
+                  +91 9652631186
+                </li>
+                <li className="flex items-center text-lg">
+                  <Mail className="mr-2 h-6 w-6 text-blue-600" />
+                  builditdreamz@gmail.com
+                </li>
+                <li className="flex items-center text-lg">
+                  <MapPin className="mr-2 h-6 w-6 text-blue-600" />
+                  10-2-289/83, Mehar Mansion, Shanti Nagar Colony, Masab Tank
+                  Hyderabad, Telangana 500028 India
+                </li>
+              </ul>
+            </div>
+            <div>
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3807.4143162844397!2d78.45109671487477!3d17.39587198807922!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb97dcc6a34d4f%3A0x8800e2e5d1ee13d1!2s10-2-289%2F83%2C%20Shanti%20Nagar%20Colony%2C%20Masab%20Tank%2C%20Hyderabad%2C%20Telangana%20500028!5e0!3m2!1sen!2sin!4v1627984635173!5m2!1sen!2sin"
+                width="100%"
+                height="450"
+                className="rounded-lg border-0"
+                allowFullScreen
+                loading="lazy"
+              ></iframe>
+            </div>
           </motion.div>
         </section>
       </main>
-
-      <footer className="bg-gray-900 text-white py-12 mt-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-xl font-bold mb-4">BuildIt</h3>
-              <p>Building dreams, one project at a time.</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold mb-4">Services</h3>
-              <ul className="space-y-2">
-                <li>Residential Construction</li>
-                <li>Commercial Construction</li>
-                <li>Renovations</li>
-                <li>Consulting</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold mb-4">Company</h3>
-              <ul className="space-y-2">
-                <li>About Us</li>
-                <li>Our Team</li>
-                <li>Careers</li>
-                <li>Contact</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold mb-4">Follow Us</h3>
-              <div className="flex space-x-4">
-                {/* Add social media icons here */}
-              </div>
-            </div>
-          </div>
-          <div className="mt-12 border-t border-gray-700 pt-8 text-center">
-            <p>&copy; 2024 BuildIt Construction. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

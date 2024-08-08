@@ -169,7 +169,7 @@ const EnquiryForm: React.FC = () => {
 
   const renderCommonFields = () => (
     <>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="name">Name</Label>
           <IconInput
@@ -194,7 +194,7 @@ const EnquiryForm: React.FC = () => {
           />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="phone">Phone</Label>
           <IconInput
@@ -222,7 +222,7 @@ const EnquiryForm: React.FC = () => {
               value={formData.area.unit}
               onValueChange={(value) => handleSelectChange("area-unit", value)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="w-32">
                 <SelectValue placeholder="Select unit" />
               </SelectTrigger>
               <SelectContent>
@@ -269,146 +269,132 @@ const EnquiryForm: React.FC = () => {
   );
 
   return (
-    <div className="h-[80vh] w-full max-w-2xl sm:dark">
-      <Card className="h-full">
-        <CardContent className="p-6 h-full overflow-y-auto">
-          <Tabs
-            value={activeTab}
-            onValueChange={(value) =>
-              setActiveTab(value as "interior" | "construction" | "development")
-            }
-            className="h-full flex flex-col"
-          >
-            <TabsList className="grid w-full grid-cols-3 mb-4">
-              <TabsTrigger value="interior">
-                <PaintBucket className="mr-2 h-4 w-4" />
-                Interior
-              </TabsTrigger>
-              <TabsTrigger value="construction">
-                <Building2 className="mr-2 h-4 w-4" />
-                Construction
-              </TabsTrigger>
-              <TabsTrigger value="development">
-                <Home className="mr-2 h-4 w-4" />
-                Development
-              </TabsTrigger>
-            </TabsList>
-            <div className="flex-grow overflow-y-auto">
-              <TabsContent value="interior" className="h-full">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {renderCommonFields()}
-                  <div className="space-y-2">
-                    <Label>Interior Types</Label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {interiorTypes.map((type) => (
-                        <div
-                          key={type.id}
-                          className="flex items-center space-x-2"
-                        >
-                          <Checkbox
-                            id={type.id}
-                            checked={formData.interiorTypes.includes(type.id)}
-                            onCheckedChange={() =>
-                              handleCheckboxChange(type.id)
-                            }
-                          />
-                          <label htmlFor={type.id}>{type.label}</label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <Button type="submit" className="w-full">
-                    Submit Enquiry
-                  </Button>
-                </form>
-              </TabsContent>
-              <TabsContent value="construction">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {renderCommonFields()}
-                  <div className="space-y-2">
-                    <Label htmlFor="constructionType">Construction Type</Label>
-                    <Select
-                      value={formData.constructionType}
-                      onValueChange={(value) =>
-                        handleSelectChange("constructionType", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select construction type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {constructionTypes.map((type) => (
-                          <SelectItem key={type.id} value={type.id}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button type="submit" className="w-full">
-                    Submit Enquiry
-                  </Button>
-                </form>
-              </TabsContent>
-              <TabsContent value="development">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {renderCommonFields()}
-                  <div className="space-y-2">
-                    <Label htmlFor="developmentType">Property Type</Label>
-                    <Select
-                      value={formData.developmentType}
-                      onValueChange={(value) =>
-                        handleSelectChange("developmentType", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select property type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {developmentTypes.map((type) => (
-                          <SelectItem key={type.id} value={type.id}>
-                            {type.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="advance">Advance</Label>
-                      <IconInput
-                        id="advance"
-                        name="advance"
-                        type="number"
-                        value={formData.advance}
-                        onChange={handleInputChange}
-                        required
-                        icon={<FaRupeeSign className="h-4 w-4" />}
+    <div className="h-[80vh] w-full max-w-2xl mx-auto sm:dark p-4 lg:p-8">
+  <Card className="h-full shadow-lg">
+    <CardContent className="p-8 h-full overflow-y-auto">
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) =>
+          setActiveTab(value as "interior" | "construction" | "development")
+        }
+        className="h-full flex flex-col"
+      >
+        <TabsList className="justify-center mb-8">
+          <TabsTrigger value="interior" className="text-xs lg:text-lg font-medium py-2 lg:px-4 lg:py-2">
+            Interior
+          </TabsTrigger>
+          <TabsTrigger value="construction" className="text-xs lg:text-lg font-medium p-2 lg:px-4 lg:py-2">
+            Construction
+          </TabsTrigger>
+          <TabsTrigger value="development" className="text-xs lg:text-lg font-medium p-2 lg:px-4 lg:py-2">
+            Development
+          </TabsTrigger>
+        </TabsList>
+        <form onSubmit={handleSubmit} className="space-y-6 flex-grow">
+          <TabsContent value="interior">
+            {renderCommonFields()}
+            <div className="space-y-4">
+              <div>
+                <Label>Type of Interior Work</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+                  {interiorTypes.map((type) => (
+                    <div key={type.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={type.id}
+                        checked={formData.interiorTypes.includes(type.id)}
+                        onCheckedChange={() => handleCheckboxChange(type.id)}
                       />
+                      <Label htmlFor={type.id}>{type.label}</Label>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="ration">Ration</Label>
-                      <IconInput
-                        id="ration"
-                        name="ration"
-                        value={formData.ration}
-                        onChange={handleInputChange}
-                        required
-                        icon={<Ruler className="h-4 w-4" />}
-                      />
-                    </div>
-                  </div>
-                  <Button type="submit" className="w-full">
-                    Submit Enquiry
-                  </Button>
-                </form>
-              </TabsContent>
+                  ))}
+                </div>
+              </div>
             </div>
-          </Tabs>
-        </CardContent>
-      </Card>
-      <Toaster />
-    </div>
+          </TabsContent>
+          <TabsContent value="construction">
+            {renderCommonFields()}
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="constructionType">Type of Construction</Label>
+                <Select
+                  value={formData.constructionType}
+                  onValueChange={(value) =>
+                    handleSelectChange("constructionType", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select construction type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {constructionTypes.map((type) => (
+                      <SelectItem key={type.id} value={type.id}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="development">
+            {renderCommonFields()}
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="developmentType">Type of Development</Label>
+                <Select
+                  value={formData.developmentType}
+                  onValueChange={(value) =>
+                    handleSelectChange("developmentType", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select development type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {developmentTypes.map((type) => (
+                      <SelectItem key={type.id} value={type.id}>
+                        {type.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </TabsContent>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="advance">Advance Amount</Label>
+              <IconInput
+                id="advance"
+                name="advance"
+                value={formData.advance}
+                onChange={handleInputChange}
+                icon={<FaRupeeSign className="h-4 w-4" />}
+                className="mt-2"
+              />
+            </div>
+            <div>
+              <Label htmlFor="ration">Ration</Label>
+              <IconInput
+                id="ration"
+                name="ration"
+                value={formData.ration}
+                onChange={handleInputChange}
+                required
+                icon={<Home className="h-4 w-4" />}
+                className="mt-2"
+              />
+            </div>
+          </div>
+          <Button type="submit" className="w-full">
+            Submit Enquiry
+          </Button>
+        </form>
+      </Tabs>
+    </CardContent>
+  </Card>
+  <Toaster />
+</div>
   );
 };
 
