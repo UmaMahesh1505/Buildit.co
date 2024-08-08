@@ -1,3 +1,4 @@
+// app/api/enquiries/route.ts
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Enquiry from "@/models/enquiry";
@@ -23,7 +24,16 @@ export async function POST(request: Request) {
       ration,
     } = body;
 
-    if (!type || !name || !email || !phone || !area || !location || !budget) {
+    if (
+      !type ||
+      !name ||
+      !email ||
+      !phone ||
+      !area.value ||
+      !area.unit ||
+      !location ||
+      !budget
+    ) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -35,7 +45,10 @@ export async function POST(request: Request) {
       name,
       email,
       phone,
-      area,
+      area: {
+        value: area.value,
+        unit: area.unit,
+      },
       location,
       budget,
       interiorTypes: type === "interior" ? interiorTypes : undefined,
@@ -47,7 +60,7 @@ export async function POST(request: Request) {
 
     await newEnquiry.save();
 
-    // // Send email notification
+    // Send email notification
     // try {
     //   await sendEnquiryNotification(newEnquiry);
     // } catch (emailError) {

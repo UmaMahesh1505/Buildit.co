@@ -22,7 +22,8 @@ export async function POST(request: Request) {
     if (
       !transactionType ||
       !propertyType ||
-      !area ||
+      !area.value ||
+      !area.unit ||
       !location ||
       !budget ||
       !duration ||
@@ -50,17 +51,6 @@ export async function POST(request: Request) {
 
     await newRequirement.save();
 
-    // // Send email notification
-    // try {
-    //   await sendRequirementNotification(newRequirement);
-    // } catch (emailError) {
-    //   console.error("Detailed error sending email notification:", emailError);
-    //   return NextResponse.json(
-    //     { error: "Error sending email notification" },
-    //     { status: 500 }
-    //   );
-    // }
-
     return NextResponse.json(
       { message: "Requirement submitted successfully" },
       { status: 201 }
@@ -78,6 +68,7 @@ export async function GET() {
   if (!isAuthenticated()) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
   try {
     await dbConnect();
     const requirements = await Requirement.find({}).sort({ createdAt: -1 });

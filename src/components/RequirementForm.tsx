@@ -1,4 +1,5 @@
 // components/RequirementForm.tsx
+
 "use client";
 import React, { useState, ChangeEvent } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -35,10 +36,16 @@ const durationOptions = [
   { id: "6months", label: "Within 6 months" },
 ];
 
+const areaUnits = [
+  { id: "sqft", label: "Square Feet" },
+  { id: "acre", label: "Acre" },
+  { id: "gunta", label: "Gunta" },
+];
+
 interface FormData {
   transactionType: string;
   propertyType: string;
-  area: string;
+  area: { value: string; unit: string };
   location: string;
   budget: string;
   duration: string;
@@ -51,7 +58,7 @@ const RequirementForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     transactionType: "",
     propertyType: "",
-    area: "",
+    area: { value: "", unit: "" },
     location: "",
     budget: "",
     duration: "",
@@ -62,17 +69,28 @@ const RequirementForm: React.FC = () => {
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "area") {
+      setFormData((prev) => ({
+        ...prev,
+        area: { ...prev.area, value: value },
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "area-unit") {
+      setFormData((prev) => ({ ...prev, area: { ...prev.area, unit: value } }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/requirements", {
+      const response = await fetch("/api/requirement", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -88,7 +106,7 @@ const RequirementForm: React.FC = () => {
         setFormData({
           transactionType: "",
           propertyType: "",
-          area: "",
+          area: { value: "", unit: "" },
           location: "",
           budget: "",
           duration: "",
@@ -158,16 +176,35 @@ const RequirementForm: React.FC = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="area">Area (sqft/acre, guntas)</Label>
-                <IconInput
-                  id="area"
-                  name="area"
-                  type="text"
-                  value={formData.area}
-                  onChange={handleInputChange}
-                  required
-                  icon={<Ruler className="h-4 w-4" />}
-                />
+                <Label>Area</Label>
+                <div className="flex items-center space-x-2">
+                  <IconInput
+                    id="area"
+                    name="area"
+                    type="text"
+                    value={formData.area.value}
+                    onChange={handleInputChange}
+                    required
+                    icon={<Ruler className="h-4 w-4" />}
+                  />
+                  <Select
+                    value={formData.area.unit}
+                    onValueChange={(value) =>
+                      handleSelectChange("area-unit", value)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {areaUnits.map((unit) => (
+                        <SelectItem key={unit.id} value={unit.id}>
+                          {unit.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="location">Location</Label>

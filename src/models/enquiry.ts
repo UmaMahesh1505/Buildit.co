@@ -1,6 +1,11 @@
 // app/models/enquiry.ts
 import mongoose from "mongoose";
 
+const AreaSchema = new mongoose.Schema({
+  value: { type: Number, required: true },
+  unit: { type: String, enum: ["sqft", "acre"], required: true },
+});
+
 const EnquirySchema = new mongoose.Schema({
   type: {
     type: String,
@@ -10,7 +15,7 @@ const EnquirySchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   phone: { type: String, required: true },
-  area: { type: Number, required: true },
+  area: AreaSchema,
   location: { type: String, required: true },
   budget: {
     type: String,

@@ -28,6 +28,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+interface FormData {
+  type: "interior" | "construction" | "development";
+  name: string;
+  email: string;
+  phone: string;
+  area: { value: number; unit: string };
+  location: string;
+  budget: string;
+  interiorTypes: string[];
+  constructionType: string;
+  developmentType: string;
+  advance: string;
+  ration: string;
+}
+
 const interiorTypes = [
   { id: "bedroom", label: "Bedroom" },
   { id: "washroom", label: "Washroom" },
@@ -54,19 +69,10 @@ const budgetOptions = [
   { id: "luxury", label: "Luxury" },
 ];
 
-interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  area: string;
-  location: string;
-  budget: string;
-  interiorTypes: string[];
-  constructionType: string;
-  developmentType: string;
-  advance: string;
-  ration: string;
-}
+const areaUnits = [
+  { id: "sqft", label: "Square Feet" },
+  { id: "acre", label: "Acre" },
+];
 
 const EnquiryForm: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
@@ -74,10 +80,11 @@ const EnquiryForm: React.FC = () => {
   >("interior");
 
   const [formData, setFormData] = useState<FormData>({
+    type: "interior",
     name: "",
     email: "",
     phone: "",
-    area: "",
+    area: { value: 0, unit: "sqft" },
     location: "",
     budget: "",
     interiorTypes: [],
@@ -93,7 +100,16 @@ const EnquiryForm: React.FC = () => {
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "area-unit") {
+      setFormData((prev) => ({ ...prev, area: { ...prev.area, unit: value } }));
+    } else if (name === "area-value") {
+      setFormData((prev) => ({
+        ...prev,
+        area: { ...prev.area, value: parseFloat(value) },
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleCheckboxChange = (id: string) => {
@@ -111,7 +127,7 @@ const EnquiryForm: React.FC = () => {
       const response = await fetch("/api/enquiries", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, type: activeTab }),
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
@@ -122,10 +138,11 @@ const EnquiryForm: React.FC = () => {
         });
         // Reset form
         setFormData({
+          type: "interior",
           name: "",
           email: "",
           phone: "",
-          area: "",
+          area: { value: 0, unit: "sqft" },
           location: "",
           budget: "",
           interiorTypes: [],
@@ -190,16 +207,33 @@ const EnquiryForm: React.FC = () => {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="area">Area (sqft)</Label>
-          <IconInput
-            id="area"
-            name="area"
-            type="number"
-            value={formData.area}
-            onChange={handleInputChange}
-            required
-            icon={<Ruler className="h-4 w-4" />}
-          />
+          <Label>Area</Label>
+          <div className="flex items-center space-x-2">
+            <IconInput
+              id="area-value"
+              name="area-value"
+              type="number"
+              value={formData.area.value.toString()}
+              onChange={(e) => handleSelectChange("area-value", e.target.value)}
+              required
+              icon={<Ruler className="h-4 w-4" />}
+            />
+            <Select
+              value={formData.area.unit}
+              onValueChange={(value) => handleSelectChange("area-unit", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select unit" />
+              </SelectTrigger>
+              <SelectContent>
+                {areaUnits.map((unit) => (
+                  <SelectItem key={unit.id} value={unit.id}>
+                    {unit.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
       <div className="space-y-2">
@@ -267,11 +301,16 @@ const EnquiryForm: React.FC = () => {
                     <Label>Interior Types</Label>
                     <div className="grid grid-cols-2 gap-2">
                       {interiorTypes.map((type) => (
-                        <div key={type.id} className="flex items-center space-x-2">
+                        <div
+                          key={type.id}
+                          className="flex items-center space-x-2"
+                        >
                           <Checkbox
                             id={type.id}
                             checked={formData.interiorTypes.includes(type.id)}
-                            onCheckedChange={() => handleCheckboxChange(type.id)}
+                            onCheckedChange={() =>
+                              handleCheckboxChange(type.id)
+                            }
                           />
                           <label htmlFor={type.id}>{type.label}</label>
                         </div>
@@ -348,7 +387,7 @@ const EnquiryForm: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="ratio">Ration</Label>
+                      <Label htmlFor="ration">Ration</Label>
                       <IconInput
                         id="ration"
                         name="ration"
