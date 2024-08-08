@@ -1,45 +1,78 @@
+// components/RequirementForm.tsx
 "use client";
 import React, { useState, ChangeEvent } from "react";
-import { toast } from "@/components/ui/use-toast";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import IconInput from "@/components/IconInput";
-import { Toaster } from "@/components/ui/toaster";
-import { Mail, Phone, User, MapPin, Ruler, FileText } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
+import { User, Phone, Mail, MapPin, Ruler } from "lucide-react";
+import IconInput from "./IconInput";
+import { Toaster } from "./ui/toaster";
 import { FaRupeeSign } from "react-icons/fa";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const transactionTypes = [
+  { id: "buy", label: "Buy" },
+  { id: "sale", label: "Sale" },
+];
+
+const propertyTypes = [
+  { id: "flat", label: "Flat" },
+  { id: "independentBuilding", label: "Independent Building" },
+  { id: "land", label: "Land" },
+];
+
+const durationOptions = [
+  { id: "immediate", label: "Immediate" },
+  { id: "3months", label: "Within 3 months" },
+  { id: "6months", label: "Within 6 months" },
+];
 
 interface FormData {
-  fullName: string;
-  email: string;
-  contactNumber: string;
-  city: string;
-  projectArea: string;
+  transactionType: string;
+  propertyType: string;
+  area: string;
+  location: string;
   budget: string;
-  requirements: string;
+  duration: string;
+  name: string;
+  email: string;
+  phone: string;
 }
 
-const RequirementsForm: React.FC = () => {
+const RequirementForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    fullName: "",
-    email: "",
-    contactNumber: "",
-    city: "",
-    projectArea: "",
+    transactionType: "",
+    propertyType: "",
+    area: "",
+    location: "",
     budget: "",
-    requirements: "",
+    duration: "",
+    name: "",
+    email: "",
+    phone: "",
   });
 
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("/api/requirement", {
+      const response = await fetch("/api/requirements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -48,22 +81,24 @@ const RequirementsForm: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         toast({
-          title: "Form Submitted",
+          title: "Requirement Submitted",
           description: data.message,
         });
         // Reset form
         setFormData({
-          fullName: "",
-          email: "",
-          contactNumber: "",
-          city: "",
-          projectArea: "",
+          transactionType: "",
+          propertyType: "",
+          area: "",
+          location: "",
           budget: "",
-          requirements: "",
+          duration: "",
+          name: "",
+          email: "",
+          phone: "",
         });
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to submit form");
+        throw new Error(errorData.error || "Failed to submit requirement");
       }
     } catch (error) {
       toast({
@@ -71,124 +106,160 @@ const RequirementsForm: React.FC = () => {
         description:
           error instanceof Error
             ? error.message
-            : "Failed to submit form. Please try again.",
+            : "Failed to submit requirement. Please try again.",
         variant: "destructive",
       });
     }
   };
 
   return (
-    <div className="w-full bg-white sm:bg-black sm:bg-opacity-50 p-4 sm:p-6 rounded-xl shadow-2xl lg:max-w-2xl">
-      <h2 className="text-xl sm:text-2xl font-bold text-gray-800 sm:text-white mb-4 sm:mb-6 text-center">Connect With Our Designer
-      To Get Started</h2>
-      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            <div>
-              <Label htmlFor="fullName" className="text-gray-700 sm:text-white mb-1 sm:mb-2 block">Full Name</Label>
+    <div className="w-full sm:max-w-2xl mx-auto sm:dark">
+      <Card className="h-full">
+        <CardHeader className="text-center text-2xl font-bold py-4">
+          Post Your Requirement
+        </CardHeader>
+        <CardContent className="p-6 h-full overflow-y-auto">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Transaction Type</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {transactionTypes.map((type) => (
+                    <div key={type.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={type.id}
+                        checked={formData.transactionType === type.id}
+                        onCheckedChange={() =>
+                          handleSelectChange("transactionType", type.id)
+                        }
+                      />
+                      <label htmlFor={type.id}>{type.label}</label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Property Type</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {propertyTypes.map((type) => (
+                    <div key={type.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={type.id}
+                        checked={formData.propertyType === type.id}
+                        onCheckedChange={() =>
+                          handleSelectChange("propertyType", type.id)
+                        }
+                      />
+                      <label htmlFor={type.id}>{type.label}</label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="area">Area (sqft/acre, guntas)</Label>
+                <IconInput
+                  id="area"
+                  name="area"
+                  type="text"
+                  value={formData.area}
+                  onChange={handleInputChange}
+                  required
+                  icon={<Ruler className="h-4 w-4" />}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="location">Location</Label>
+                <IconInput
+                  id="location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  required
+                  icon={<MapPin className="h-4 w-4" />}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="budget">Budget</Label>
+                <IconInput
+                  id="budget"
+                  name="budget"
+                  type="text"
+                  value={formData.budget}
+                  onChange={handleInputChange}
+                  required
+                  icon={<FaRupeeSign className="h-4 w-4" />}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="duration">Preferred Duration</Label>
+                <Select
+                  value={formData.duration}
+                  onValueChange={(value) =>
+                    handleSelectChange("duration", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select preferred duration" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {durationOptions.map((option) => (
+                      <SelectItem key={option.id} value={option.id}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <IconInput
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                  icon={<User className="h-4 w-4" />}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <IconInput
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  icon={<Mail className="h-4 w-4" />}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone</Label>
               <IconInput
-                id="fullName"
-                name="fullName"
-                value={formData.fullName}
+                id="phone"
+                name="phone"
+                value={formData.phone}
                 onChange={handleInputChange}
                 required
-                icon={<User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />}
-                className="bg-gray-100 sm:bg-gray-800 text-gray-800 sm:text-white border-gray-300 sm:border-gray-700 focus:border-blue-500"
+                icon={<Phone className="h-4 w-4" />}
               />
             </div>
-            <div>
-              <Label htmlFor="email" className="text-gray-700 sm:text-white mb-1 sm:mb-2 block">Email</Label>
-              <IconInput
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                icon={<Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />}
-                className="bg-gray-100 sm:bg-gray-800 text-gray-800 sm:text-white border-gray-300 sm:border-gray-700 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <Label htmlFor="contactNumber" className="text-gray-700 sm:text-white mb-1 sm:mb-2 block">Contact Number</Label>
-              <IconInput
-                id="contactNumber"
-                name="contactNumber"
-                value={formData.contactNumber}
-                onChange={handleInputChange}
-                required
-                icon={<Phone className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />}
-                className="bg-gray-100 sm:bg-gray-800 text-gray-800 sm:text-white border-gray-300 sm:border-gray-700 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <Label htmlFor="city" className="text-gray-700 sm:text-white mb-1 sm:mb-2 block">City</Label>
-              <IconInput
-                id="city"
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                required
-                icon={<MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />}
-                className="bg-gray-100 sm:bg-gray-800 text-gray-800 sm:text-white border-gray-300 sm:border-gray-700 focus:border-blue-500"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            <div>
-              <Label htmlFor="projectArea" className="text-gray-700 sm:text-white mb-1 sm:mb-2 block">Project Area</Label>
-              <IconInput
-                id="projectArea"
-                name="projectArea"
-                value={formData.projectArea}
-                onChange={handleInputChange}
-                required
-                icon={<Ruler className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />}
-                className="bg-gray-100 sm:bg-gray-800 text-gray-800 sm:text-white border-gray-300 sm:border-gray-700 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <Label htmlFor="budget" className="text-gray-700 sm:text-white mb-1 sm:mb-2 block">Budget</Label>
-              <IconInput
-                id="budget"
-                name="budget"
-                type="number"
-                value={formData.budget}
-                onChange={handleInputChange}
-                required
-                icon={<FaRupeeSign className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />}
-                className="bg-gray-100 sm:bg-gray-800 text-gray-800 sm:text-white border-gray-300 sm:border-gray-700 focus:border-blue-500"
-              />
-            </div>
-          </div>
-          <div>
-            <Label htmlFor="requirements" className="text-gray-700 sm:text-white mb-1 sm:mb-2 block">Requirements</Label>
-            <div className="relative">
-              <select
-                id="requirements"
-                name="requirements"
-                value={formData.requirements}
-                onChange={handleInputChange}
-                required
-                className="block w-full p-2 sm:p-3 bg-gray-100 sm:bg-gray-800 text-gray-800 sm:text-white border-gray-300 sm:border-gray-700 rounded-md focus:border-blue-500 appearance-none"
-              >
-                <option value="" disabled>Select Requirements</option>
-                <option value="Office Design and Build">Office Design and Build</option>
-                <option value="Hospitality Design & Build">Hospitality Design & Build</option>
-                <option value="Retail Design and Build">Retail Design and Build</option>
-                <option value="Renovation">Renovation</option>
-                <option value="Refurbishment">Refurbishment</option>
-                <option value="Others">Others</option>
-              </select>
-              <FileText className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400 pointer-events-none" />
-            </div>
-          </div>
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 sm:py-3 rounded-md transition duration-300">
-            Submit Requirements
-          </Button>
+            <Button type="submit" className="w-full">
+              Submit Requirement
+            </Button>
           </form>
+        </CardContent>
+      </Card>
       <Toaster />
     </div>
   );
 };
 
-export default RequirementsForm;
+export default RequirementForm;
