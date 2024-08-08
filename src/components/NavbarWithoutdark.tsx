@@ -16,6 +16,7 @@ import {
   FaBox,
   FaBlog,
   FaEdit,
+  FaSearchLocation,
 } from "react-icons/fa";
 
 // Importing React Icons
@@ -57,6 +58,10 @@ const NavbarWithoutDark = () => {
             <NavLink href="/about">
               <FaInfoCircle />
               <span>About</span>
+            </NavLink>
+            <NavLink href="/requirements">
+              <FaSearchLocation/>
+              <span>Requirements Posting</span>
             </NavLink>
 
             <NavLink href="/blog">
@@ -111,6 +116,10 @@ const NavbarWithoutDark = () => {
             <MobileNavLink href="/about">
               <FaInfoCircle />
               <span>About</span>
+            </MobileNavLink>
+            <MobileNavLink href="/requirements">
+              <FaSearchLocation />
+              <span>Requirements Posting</span>
             </MobileNavLink>
           </div>
           <MobileNavLink href="/blog">
